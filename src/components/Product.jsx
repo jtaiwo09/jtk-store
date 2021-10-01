@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 import SearchIcon from '@mui/icons-material/Search';
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
+import {Link} from 'react-router-dom';
 
 const Info = styled.div`
     width: 100%;
@@ -65,6 +66,7 @@ const Icon = styled.div`
 `;
 
 const Product = ({item}) => {
+    
     return (
         <Container>
             <Circle />
@@ -73,9 +75,11 @@ const Product = ({item}) => {
                 <Icon>
                     <ShoppingCartOutlinedIcon />
                 </Icon>
-                <Icon>
-                    <SearchIcon />
-                </Icon>
+                <Link to={`product/${item._id}`} className='link'>
+                    <Icon>
+                        <SearchIcon />
+                    </Icon>
+                </Link>
                 <Icon>
                     <FavoriteBorderOutlinedIcon />
                 </Icon>

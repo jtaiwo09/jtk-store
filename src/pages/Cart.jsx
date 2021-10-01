@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Navbar from '../components/Navbar';
 import Announcement from '../components/Announcement';
@@ -6,6 +6,10 @@ import Footer from '../components/Footer';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import { mobile } from '../responsive';
+import {useSelector} from 'react-redux';
+import StripeCheckout from 'react-stripe-checkout';
+import {userRequest} from '../requestMethods';
+import {useHistory} from 'react-router-dom';
 
 const Container = styled.div``;
 const Wrapper = styled.div`
@@ -133,7 +137,32 @@ const Button = styled.button`
     cursor: pointer;
 `;
 
+const KEY = process.env.REACT_APP_STRIPE;
 const Cart = () => {
+    const cart = useSelector(state => state.cart);
+    const [stripeToken, setStripeToken] = useState(null);
+    const history = useHistory();
+
+    const onToken=(token)=> {
+        setStripeToken(token)
+    }
+    useEffect(() => {
+
+        const makeRequest= async () =>{
+            try {
+                const res = await userRequest.post('http://localhost:3000/api/checkout/payment', {
+                tokenId: stripeToken.id,
+                amount: cart.total * 100
+            });
+            console.log(res.data)
+            history.push('/success');
+            } catch (error) {
+                console.log(error)
+            }
+        }
+        stripeToken && makeRequest();
+    }, [stripeToken, cart.total, history])
+
     return (
         <Container>
             <Navbar />
@@ -150,57 +179,35 @@ const Cart = () => {
                 </Top>
                 <Bottom>
                     <Info>
-                        <Product>
+                        {
+                            cart.products.map(product => <Product>
                             <ProductDetail>
-                                <Image src='https://hips.hearstapps.com/vader-prod.s3.amazonaws.com/1614188818-TD1MTHU_SHOE_ANGLE_GLOBAL_MENS_TREE_DASHERS_THUNDER_b01b1013-cd8d-48e7-bed9-52db26515dc4.png?crop=1xw:1.00xh;center,top&resize=480%3A%2A' />
+                                <Image src={product.img} />
                                 <Details>
-                                    <ProductName><b>Product: </b>JESSIE THUNDER</ProductName>
-                                    <ProductId><b>ID: </b>12567373638djbc</ProductId>
-                                    <ProductColor color='black'/>
-                                    <ProductSize><b>Size: </b>25.6</ProductSize>
+                                    <ProductName><b>Product: </b>{product.title}</ProductName>
+                                    <ProductId><b>ID: </b>{product._id}</ProductId>
+                                    <ProductColor color={product.color}/>
+                                    <ProductSize><b>Size: </b>{product.size}</ProductSize>
                                 </Details>
                             </ProductDetail>
                             <PriceDetail>
                                 <ProductAmountContainer>
                                     <AddIcon />
-                                    <ProductAmount>2</ProductAmount>
+                                    <ProductAmount>{product.quantity}</ProductAmount>
                                     <RemoveIcon />
                                 </ProductAmountContainer>
-                                <ProductPrice>$ 50</ProductPrice>
+                                <ProductPrice>$ {product.price * product.quantity}</ProductPrice>
                             </PriceDetail>
                         </Product>
+
+                        )}
                         <H1 />
-                        <Product>
-                        <ProductDetail>
-                            <Image src="https://i.pinimg.com/originals/2d/af/f8/2daff8e0823e51dd752704a47d5b795c.png" />
-                            <Details>
-                            <ProductName>
-                                <b>Product:</b> HAKURA T-SHIRT
-                            </ProductName>
-                            <ProductId>
-                                <b>ID:</b> 93813718293
-                            </ProductId>
-                            <ProductColor color="gray" />
-                            <ProductSize>
-                                <b>Size:</b> M
-                            </ProductSize>
-                            </Details>
-                        </ProductDetail>
-                        <PriceDetail>
-                            <ProductAmountContainer>
-                            <AddIcon />
-                            <ProductAmount>1</ProductAmount>
-                            <RemoveIcon />
-                            </ProductAmountContainer>
-                            <ProductPrice>$ 20</ProductPrice>
-                        </PriceDetail>
-                        </Product>
                     </Info>
                     <Summary>
                         <SummaryTitle>ORDER SUMMARY</SummaryTitle>
                         <SummaryItem>
                             <SummaryItemText>Subtotal</SummaryItemText>
-                            <SummaryItemPrice>$ 80</SummaryItemPrice>
+                            <SummaryItemPrice>$ {cart.total}</SummaryItemPrice>
                         </SummaryItem>
                         <SummaryItem>
                             <SummaryItemText>Estimated Shipping</SummaryItemText>
@@ -212,9 +219,22 @@ const Cart = () => {
                         </SummaryItem>
                         <SummaryItem type='total'>
                             <SummaryItemText>Total</SummaryItemText>
-                            <SummaryItemPrice>$ 80</SummaryItemPrice>
+                            <SummaryItemPrice>$ {cart.total}</SummaryItemPrice>
                         </SummaryItem>
-                        <Button>CHECKOUT NOW</Button>
+                        { stripeToken ? <span>Making payment please wait...</span> : (
+                            <StripeCheckout
+                            name='JTK-Store'
+                            image='https://avatars.githubusercontent.com/u/1486366?v=4'
+                            billingAddress
+                            shippingAddress
+                            description={`Your tohtal is $${cart.total}`}
+                            amount={cart.total * 100}
+                            token={onToken}
+                            stripeKey={KEY}
+                        >
+                            <Button>CHECKOUT NOW</Button>
+                        </StripeCheckout>
+                        )}
                     </Summary>
                 </Bottom>
             </Wrapper>

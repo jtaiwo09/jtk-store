@@ -1,12 +1,17 @@
 import RemoveIcon from '@mui/icons-material/Remove';
 import AddIcon from '@mui/icons-material/Add';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Announcement from '../components/Announcement';
 import Footer from '../components/Footer';
 import Navbar from '../components/Navbar';
 import NewsLetter from '../components/NewsLetter';
 import { mobile } from '../responsive';
+import {useLocation} from 'react-router-dom';
+import { publicRequest } from '../requestMethods';
+import {useDispatch} from 'react-redux';
+import {addProduct} from '../redux/cartRedux';
+
 
 const Container = styled.div`
 `;
@@ -103,43 +108,67 @@ const Button = styled.button`
 `;
 
 const Product = () => {
+    const location = useLocation();
+    const id = location.pathname.split('/')[2];
+    const [product, setProduct] = useState({})
+    const [quantity, setQuantity] = useState(1)
+    const [color, setColor] = useState('')
+    const [size, setSize] = useState('')
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        const getProduct = async ()=> {
+            try {
+                const res = await publicRequest.get('/products/find/'+id);
+                setProduct(res.data)
+            } catch (error) {
+                
+            }
+        }
+        getProduct();
+    }, [id]);
+
+    const handleQuantity =(type)=> {
+        if(type === 'dec'){
+            quantity > 1 && setQuantity(prev => prev - 1)
+        } else {
+            setQuantity(prev => prev + 1)
+        }
+    }
+    const handleClick =()=> {
+        dispatch(addProduct({...product, quantity, color, size}))
+    }
     return (
         <Container>
             <Navbar />
             <Announcement />
             <Wrapper>
                 <ImageContainer>
-                    <Image src='https://i.ibb.co/S6qMxwr/jean.jpg' />
+                    <Image src={product.img} />
                 </ImageContainer>
                 <InfoContainer>
-                    <Title>Denim Jumpsuit</Title>
-                    <Desc>Lorem ipsum dolor sit amet consectetur adipisicing elit. Id quam doloribus alias doloremque dolore suscipit provident nobis neque eligendi nesciunt a debitis culpa, obcaecati non possimus fuga? Enim, nisi molestias.</Desc>
-                    <Price>$30</Price>
+                    <Title>{product.title}</Title>
+                    <Desc>{product.desc}</Desc>
+                    <Price>{product.price}</Price>
                     <FilterContainer>
                         <Filter>
                             <FilterTitle>Color: </FilterTitle>
-                            <FilterColor color='black' />
-                            <FilterColor color='darkblue' />
-                            <FilterColor color='gray' />
+                            {product.color?.map((c)=> (<FilterColor color={c} key={c} onClick={()=> setColor(c)}/>) )}
                         </Filter>
                         <Filter>
                             <FilterTitle>Size: </FilterTitle>
-                            <FilterSize>
-                                <FilterSizeOption>XS</FilterSizeOption>
-                                <FilterSizeOption>S</FilterSizeOption>
-                                <FilterSizeOption>M</FilterSizeOption>
-                                <FilterSizeOption>L</FilterSizeOption>
-                                <FilterSizeOption>XL</FilterSizeOption>
+                            <FilterSize onChange={(e)=> setSize(e.target.value)}>
+                            {product?.size?.map((s)=> <FilterSizeOption value={s} key={s}>{s}</FilterSizeOption> )}
                             </FilterSize>
                         </Filter>
                     </FilterContainer>
                     <AddContainer>
                         <AmountContainer>
-                            <RemoveIcon />
-                            <Amount>1</Amount>
-                            <AddIcon />
+                            <RemoveIcon onClick={()=> handleQuantity('dec')} />
+                            <Amount>{quantity}</Amount>
+                            <AddIcon onClick={()=> handleQuantity('inc')} />
                         </AmountContainer>
-                        <Button>ADD TO CART</Button>
+                        <Button onClick={handleClick}>ADD TO CART</Button>
                     </AddContainer>
                 </InfoContainer>
             </Wrapper>
