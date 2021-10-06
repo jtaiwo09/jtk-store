@@ -12,9 +12,18 @@ const cartSlice = createSlice({
             state.quantity += 1;
             state.products.push(action.payload);
             state.total += action.payload.price * action.payload.quantity;
+        },
+        updateQty: (state, action)=> {
+            if(action.payload.type === 'dec'){
+                state.products.find(item=> item._id === action.payload.id).quantity -= 1;
+                state.total += action.payload.price * action.payload.quantity;
+            } else {
+                state.products.find(item=> item._id === action.payload.id).quantity += 1;
+                state.total += action.payload.price * action.payload.quantity;
+            }
         }
     }
 });
 
-export const { addProduct } = cartSlice.actions;
+export const { addProduct, updateQty } = cartSlice.actions;
 export default cartSlice.reducer;

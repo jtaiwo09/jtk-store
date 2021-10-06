@@ -1,7 +1,7 @@
 
 import axios from 'axios';
 
-const BASEURL = 'http://location:3000/api';
+const BASEURL = 'http://localhost:3000/api';
 const Token = '';
 
 export const publicRequest = axios.create({

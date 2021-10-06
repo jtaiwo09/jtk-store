@@ -6,10 +6,12 @@ import Footer from '../components/Footer';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import { mobile } from '../responsive';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import StripeCheckout from 'react-stripe-checkout';
 import {userRequest} from '../requestMethods';
 import {useHistory} from 'react-router-dom';
+import { updQty } from '../redux/apiCall';
+import { updateQty } from '../redux/cartRedux';
 
 const Container = styled.div``;
 const Wrapper = styled.div`
@@ -53,6 +55,7 @@ const Info = styled.div`
 const Product = styled.div`
     display: flex;
     justify-content: space-between;
+    margin: 10px 0;
     ${mobile({ flexDirection: 'column' })}
 `;
 const ProductDetail = styled.div`
@@ -88,6 +91,7 @@ const ProductAmountContainer = styled.div`
     display: flex;
     align-items: center;
     margin-bottom: 20px;
+    cursor: pointer;
 `;
 const ProductAmount = styled.div`
     font-size: 24px;
@@ -137,10 +141,13 @@ const Button = styled.button`
     cursor: pointer;
 `;
 
-const KEY = process.env.REACT_APP_STRIPE;
+// const KEY = process.env.REACT_APP_STRIPE;
+const KEY = 'pk_test_51IJgZRJrvBV6pQg1wDNbJRk7JrD7uawvcKtoe1gkirUtV0nYL8cSN3lGZt9ciTpZeZjwm5NnouoJ4fifHwqhBBNT00h3DTnddf';
+
 const Cart = () => {
     const cart = useSelector(state => state.cart);
     const [stripeToken, setStripeToken] = useState(null);
+    const dispatch = useDispatch()
     const history = useHistory();
 
     const onToken=(token)=> {
@@ -163,6 +170,15 @@ const Cart = () => {
         stripeToken && makeRequest();
     }, [stripeToken, cart.total, history])
 
+    const handleQuantity =(type, id)=> {
+        const quantity = cart.products.find(item=> item._id === id);
+        if(type === 'dec'){
+            quantity > 1 && dispatch(updateQty({type, id}))
+        } else {
+            dispatch(updateQty({type, id}))
+        }
+    }
+
     return (
         <Container>
             <Navbar />
@@ -180,7 +196,7 @@ const Cart = () => {
                 <Bottom>
                     <Info>
                         {
-                            cart.products.map(product => <Product>
+                            cart.products.map(product => <><Product>
                             <ProductDetail>
                                 <Image src={product.img} />
                                 <Details>
@@ -192,16 +208,16 @@ const Cart = () => {
                             </ProductDetail>
                             <PriceDetail>
                                 <ProductAmountContainer>
-                                    <AddIcon />
-                                    <ProductAmount>{product.quantity}</ProductAmount>
-                                    <RemoveIcon />
+                                    <RemoveIcon onClick={()=> handleQuantity('dec', product._id)} />
+                                        <ProductAmount>{product.quantity}</ProductAmount>
+                                    <AddIcon onClick={()=> handleQuantity('inc', product._id)} />
                                 </ProductAmountContainer>
                                 <ProductPrice>$ {product.price * product.quantity}</ProductPrice>
                             </PriceDetail>
                         </Product>
-
-                        )}
                         <H1 />
+                        </>
+                        )}
                     </Info>
                     <Summary>
                         <SummaryTitle>ORDER SUMMARY</SummaryTitle>

@@ -3,13 +3,19 @@ import ProductList from './pages/ProductList';
 import Product from './pages/Product';
 import Register from "./pages/Register";
 import Login from "./pages/Login";
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
 import Cart from "./pages/Cart";
 import Pay from './pages/Pay';
 import Success from './pages/Success';
 import './App.css';
+import { useSelector } from "react-redux";
+// import Cookies from 'universal-cookie';
 
+// const cookies = new Cookies();
+
+// const authToken = cookies.get("token")
 const App = () => {
+  const user = useSelector(state => state.user.currentUser)
   return (
     <Router>
       <Switch>
@@ -25,10 +31,10 @@ const App = () => {
           <Product />
         </Route>
         <Route path='/login'>
-          <Login />
+          {user ? <Redirect to='/' /> : <Login />}
         </Route>
         <Route path='/register'>
-          <Register />
+          {user ? <Redirect to='/' /> : <Register />}
         </Route>
         <Route path='/cart'>
           <Cart />
