@@ -10,7 +10,6 @@ import {useDispatch, useSelector} from 'react-redux';
 import StripeCheckout from 'react-stripe-checkout';
 import {userRequest} from '../requestMethods';
 import {useHistory} from 'react-router-dom';
-import { updQty } from '../redux/apiCall';
 import { updateQty } from '../redux/cartRedux';
 
 const Container = styled.div``;

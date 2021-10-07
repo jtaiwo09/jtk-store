@@ -1,6 +1,5 @@
 import { publicRequest } from "../requestMethods";
 import {fetchingStart, fetchingSuccess, fetchingFailure} from './userRedux';
-import {updateQty} from './cartRedux';
 
 const login = async (dispatch, user)=> {
     dispatch(fetchingStart);
