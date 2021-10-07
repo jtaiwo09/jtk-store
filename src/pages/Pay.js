@@ -18,7 +18,7 @@ const Button = styled.button`
     border-radius: 5px;
 `;
 
-const KEY = REACT_APP_STRIPE;
+const KEY = '';
 const Pay = () => {
     const [stripeToken, setStripeToken] = useState(null);
     const history = useHistory()
