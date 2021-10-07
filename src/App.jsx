@@ -9,11 +9,8 @@ import Pay from './pages/Pay';
 import Success from './pages/Success';
 import './App.css';
 import { useSelector } from "react-redux";
-// import Cookies from 'universal-cookie';
 
-// const cookies = new Cookies();
 
-// const authToken = cookies.get("token")
 const App = () => {
   const user = useSelector(state => state.user.currentUser)
   return (
