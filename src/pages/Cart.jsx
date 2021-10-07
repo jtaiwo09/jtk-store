@@ -141,7 +141,7 @@ const Button = styled.button`
 `;
 
 // const KEY = process.env.REACT_APP_STRIPE;
-const KEY = 'pk_test_51IJgZRJrvBV6pQg1wDNbJRk7JrD7uawvcKtoe1gkirUtV0nYL8cSN3lGZt9ciTpZeZjwm5NnouoJ4fifHwqhBBNT00h3DTnddf';
+const KEY = '';
 
 const Cart = () => {
     const cart = useSelector(state => state.cart);
