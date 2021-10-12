@@ -16,10 +16,14 @@ const cartSlice = createSlice({
         updateQty: (state, action)=> {
             if(action.payload.type === 'dec'){
                 state.products.find(item=> item._id === action.payload.id).quantity -= 1;
-                state.total += action.payload.price * action.payload.quantity;
+                state.total += (action.payload.price * action.payload.quantity) ;
+                console.log(action.payload.price)
+                console.log(action.payload.qty)
             } else {
                 state.products.find(item=> item._id === action.payload.id).quantity += 1;
-                state.total += action.payload.price * action.payload.quantity;
+                state.total += (action.payload.price * action.payload.quantity);
+                console.log(action.payload.price)
+                console.log(action.payload.qty)
             }
         }
     }

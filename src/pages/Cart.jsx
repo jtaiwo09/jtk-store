@@ -170,11 +170,11 @@ const Cart = () => {
     }, [stripeToken, cart.total, history])
 
     const handleQuantity =(type, id)=> {
-        const quantity = cart.products.find(item=> item._id === id);
+        const prod = cart.products.find(item=> item._id === id);
         if(type === 'dec'){
-            quantity > 1 && dispatch(updateQty({type, id}))
+            prod > 1 && dispatch(updateQty({price:prod.price, qty:prod.quantity - 1, id}))
         } else {
-            dispatch(updateQty({type, id}))
+            dispatch(updateQty({price:prod.price, qty:prod.quantity + 1, id}))
         }
     }
 
