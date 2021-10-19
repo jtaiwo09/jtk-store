@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import StripeCheckout from 'react-stripe-checkout';
 import { useHistory } from 'react-router';
 import { userRequest } from '../requestMethods';
+import {useSelector} from 'react-redux';
 
 const Container = styled.div`
     display: flex;
@@ -22,13 +23,12 @@ const KEY = process.env.REACT_APP_STRIPE;
 const Pay = () => {
     const [stripeToken, setStripeToken] = useState(null);
     const history = useHistory()
-    const total = useSelector(state => state.cart.total)
+    const total = useSelector(state => state.cart.total);
 
     const onToken=(token)=> {
         setStripeToken(token)
     }
     useEffect(() => {
-
         const makeRequest= async () =>{
             try {
                 const res = await userRequest.post('/checkout/payment', {
@@ -42,7 +42,7 @@ const Pay = () => {
             }
         }
         stripeToken && makeRequest();
-    }, [stripeToken, history])
+    }, [stripeToken, history, total])
     return (
         <Container>
             { stripeToken ? <span>Making payment please wait...</span> : (
