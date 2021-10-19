@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import styled from 'styled-components';
 import StripeCheckout from 'react-stripe-checkout';
 import { useHistory } from 'react-router';
-import { userRequest } from '../../../jtk-store-admin/src/requestMethods';
+import { userRequest } from '../requestMethods';
 
 const Container = styled.div`
     display: flex;
