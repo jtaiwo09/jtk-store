@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react'
-// import { popularProducts } from '../data';
 import styled from 'styled-components';
 import Product from './Product';
-// import axios from 'axios';
 import { publicRequest } from '../requestMethods';
 
 const Container = styled.div`
@@ -28,6 +26,7 @@ const Products = ({ filters, cat, sort }) => {
         getProducts();
     }, [cat])
 
+
     useEffect(() => {
         cat && setFilteredProducts(products.filter(item => Object.entries(filters).every(([key, value]) => item[key].includes(value))))
     }, [cat, products, filters]);
@@ -46,8 +45,8 @@ const Products = ({ filters, cat, sort }) => {
     return (
         <Container>
             {cat ? filteredProducts.map(item => (
-                <Product item={item} key={item._id} />
-            )) : products.map(item => (
+                <Product cat={cat} item={item} key={item._id} />
+            )) : products.slice(0, 7).map(item => (
                 <Product item={item} key={item._id} />
             ))}
         </Container>

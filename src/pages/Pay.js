@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components';
 import StripeCheckout from 'react-stripe-checkout';
-import axios from 'axios';
 import { useHistory } from 'react-router';
+import { userRequest } from '../../../jtk-store-admin/src/requestMethods';
 
 const Container = styled.div`
     display: flex;
@@ -18,10 +18,11 @@ const Button = styled.button`
     border-radius: 5px;
 `;
 
-const KEY = '';
+const KEY = process.env.REACT_APP_STRIPE;
 const Pay = () => {
     const [stripeToken, setStripeToken] = useState(null);
     const history = useHistory()
+    const total = useSelector(state => state.cart.total)
 
     const onToken=(token)=> {
         setStripeToken(token)
@@ -30,9 +31,9 @@ const Pay = () => {
 
         const makeRequest= async () =>{
             try {
-                const res = await axios.post('http://localhost:3000/api/checkout/payment', {
+                const res = await userRequest.post('/checkout/payment', {
                 tokenId: stripeToken.id,
-                amount: 2000
+                amount: total
             });
             console.log(res.data)
             history.push('/success');
@@ -46,12 +47,12 @@ const Pay = () => {
         <Container>
             { stripeToken ? <span>Making payment please wait...</span> : (
                 <StripeCheckout
-                name='Taiwo Shop'
+                name='JTK Store'
                 image='https://avatars.githubusercontent.com/u/1486366?v=4'
                 billingAddress
                 shippingAddress
-                description='Your total is $20'
-                amount={2000}
+                description= {`Your total is ${total}`}
+                amount={total}
                 token={onToken}
                 stripeKey={KEY}
             >

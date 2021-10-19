@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import SearchIcon from '@mui/icons-material/Search';
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
@@ -6,6 +6,10 @@ import Badge from '@mui/material/Badge';
 import { mobile } from '../responsive';
 import {Link} from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import LogoutIcon from '@mui/icons-material/Logout';
+import Cookies from 'universal-cookie';
 
 const Container = styled.div`
     height: 60px;
@@ -35,13 +39,13 @@ const Center = styled.div`
 const Logo = styled.h1`
     text-align:center;
     font-weight: bold;
-    ${mobile({ fontSize: '24px'})}
+    ${mobile({ fontSize: '18px'})}
 `;
 const Right = styled.div`
     flex: 1;
     display: flex;
     justify-content: flex-end;
-    ${mobile({ justifyContent: 'center', flex: 2})}
+    ${mobile({ justifyContent: 'flex-end', flex: 2, marginRight: 5, alignItems: 'center'})}
 `;
 const SearchContainer = styled.div`
     display: flex;
@@ -49,6 +53,7 @@ const SearchContainer = styled.div`
     border: 0.5px solid lightgray;
     margin-left: 25px;
     padding: 5px;
+    ${mobile({marginLeft: '5px'})}
 `;
 const Input = styled.input`
     border: none;
@@ -59,10 +64,48 @@ const MenuItem = styled.div`
     cursor: pointer;
     ${mobile({ fontSize: '12px', marginLeft: '10px'})}
 `;
+const UserWrapper = styled.div`
+    position: relative;
+`
+const UserDetails = styled.div`
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    ${mobile({ fontSize: '14px'})}
+`;
+const UserMenu = styled.div`
+    background-color: white;
+    box-shadow: 3px 9px 13px -2px rgba(0,0,0,0.30);
+    z-index: 3000;
+    position: absolute;
+    width: 100%;
+`
+const UserMenuItem = styled.div`
+    margin: 5px 10px;
+`
+const LogoutBtn = styled.div`
+    background-color: red;
+    color: white;
+    padding: 10px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+    cursor: pointer;
+    ${mobile({ fontSize: '14px', padding: 5})}
+`
+const cookies = new Cookies();
 
 const Navbar = () => {
     const quantity = useSelector(state=> state.cart.quantity);
+    const user = useSelector(state => state.user.currentUser)
+    const [userMenu, setUserMenu] = useState(false);
 
+    const handleLogout =()=> {
+        cookies.remove('accessToken');
+        window.location.reload();
+        localStorage.removeItem('persist:root');
+    }
     return (
         <Container>
             <Wrapper>
@@ -75,16 +118,45 @@ const Navbar = () => {
                 </Left>
                 <Center>
                     <Link to='/' className='link'>
-                        <Logo>LAMA.</Logo>
+                        <Logo>JTK-Store</Logo>
                     </Link>
                 </Center>
                 <Right>
-                    <Link to='/register' className='link'>
-                        <MenuItem>Register</MenuItem>
-                    </Link>
-                    <Link to='/login' className='link'>
-                        <MenuItem>Sign In</MenuItem>
-                    </Link>
+                    {
+                        !user && (
+                            <>
+                                <Link to='/register' className='link'>
+                                    <MenuItem>Register</MenuItem>
+                                </Link>
+                                <Link to='/login' className='link'>
+                                    <MenuItem>Sign In</MenuItem>
+                                </Link>
+                            </>
+                        )
+                    }
+                    {
+                        user && (
+                            <UserWrapper>
+                                <UserDetails onClick={()=> setUserMenu(prevState => !prevState)}>
+                                    <PersonOutlineIcon style={{marginLeft: 3}}/>
+                                        <span>Welcome, {user.username.length > 5 ? `${user.username.charAt(0).toUpperCase()+user.username.substring(1, 5)}...` : user.username.charAt(0).toUpperCase()+user.username.substring(1)}</span>
+                                    <KeyboardArrowDownIcon style={{fontSize: 14}}/>
+                                </UserDetails>
+                                {
+                                    userMenu && (
+                                        <UserMenu>
+                                            <UserMenuItem>
+                                                <LogoutBtn onClick={handleLogout}>
+                                                    <LogoutIcon style={{fontSize: 16, marginRight: '16px'}}/>
+                                                    Logout
+                                                </LogoutBtn>
+                                            </UserMenuItem>
+                                        </UserMenu>
+                                    )
+                                }
+                            </UserWrapper>
+                        )
+                    }
                     <Link to='/cart' className='link'>
                         <MenuItem>
                             <Badge badgeContent={quantity} color='primary'>

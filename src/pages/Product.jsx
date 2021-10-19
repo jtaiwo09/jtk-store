@@ -11,6 +11,8 @@ import {useLocation} from 'react-router-dom';
 import { publicRequest } from '../requestMethods';
 import {useDispatch} from 'react-redux';
 import {addProduct} from '../redux/cartRedux';
+import { notification } from 'antd';
+import 'antd/dist/antd.css';
 
 
 const Container = styled.div`
@@ -128,15 +130,20 @@ const Product = () => {
         getProduct();
     }, [id]);
 
-    const handleQuantity =(type)=> {
-        if(type === 'dec'){
-            quantity > 1 && setQuantity(prev => prev - 1)
-        } else {
-            setQuantity(prev => prev + 1)
-        }
-    }
-    const handleClick =()=> {
+    const handleClick =(title)=> {
+        notification['success']({
+            message: 'Item Added to cart',
+            description: title
+          });
         dispatch(addProduct({...product, quantity, color, size}))
+    }
+
+    const handleQuantity =(type)=> {
+        if(type === "dec"){
+            quantity > 1 && setQuantity(quantity - 1)
+        } else {
+            setQuantity(quantity + 1)
+        }
     }
     return (
         <Container>
@@ -149,7 +156,7 @@ const Product = () => {
                 <InfoContainer>
                     <Title>{product.title}</Title>
                     <Desc>{product.desc}</Desc>
-                    <Price>{product.price}</Price>
+                    <Price>$ {product.price}</Price>
                     <FilterContainer>
                         <Filter>
                             <FilterTitle>Color: </FilterTitle>
@@ -168,7 +175,7 @@ const Product = () => {
                             <Amount>{quantity}</Amount>
                             <AddIcon onClick={()=> handleQuantity('inc')} />
                         </AmountContainer>
-                        <Button onClick={handleClick}>ADD TO CART</Button>
+                        <Button onClick={()=> {handleClick(product.title)}}>ADD TO CART</Button>
                     </AddContainer>
                 </InfoContainer>
             </Wrapper>

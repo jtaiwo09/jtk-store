@@ -10,7 +10,9 @@ import {useDispatch, useSelector} from 'react-redux';
 import StripeCheckout from 'react-stripe-checkout';
 import {userRequest} from '../requestMethods';
 import {useHistory} from 'react-router-dom';
-import { updateQty } from '../redux/cartRedux';
+import { increaseCartQuantity } from '../redux/cartRedux';
+import { notification } from 'antd';
+import 'antd/dist/antd.css';
 
 const Container = styled.div``;
 const Wrapper = styled.div`
@@ -140,8 +142,7 @@ const Button = styled.button`
     cursor: pointer;
 `;
 
-// const KEY = process.env.REACT_APP_STRIPE;
-const KEY = '';
+const KEY = process.env.REACT_APP_STRIPE;
 
 const Cart = () => {
     const cart = useSelector(state => state.cart);
@@ -156,7 +157,7 @@ const Cart = () => {
 
         const makeRequest= async () =>{
             try {
-                const res = await userRequest.post('http://localhost:3000/api/checkout/payment', {
+                const res = await userRequest.post('/checkout/payment', {
                 tokenId: stripeToken.id,
                 amount: cart.total * 100
             });
@@ -169,13 +170,19 @@ const Cart = () => {
         stripeToken && makeRequest();
     }, [stripeToken, cart.total, history])
 
-    const handleQuantity =(type, id)=> {
-        const prod = cart.products.find(item=> item._id === id);
-        if(type === 'dec'){
-            prod > 1 && dispatch(updateQty({price:prod.price, qty:prod.quantity - 1, id}))
-        } else {
-            dispatch(updateQty({price:prod.price, qty:prod.quantity + 1, id}))
-        }
+    const handleClick =()=> {
+        history.goBack();
+    }
+
+    const handleQuantity = async (type, id, title)=> {
+        await dispatch(increaseCartQuantity({type, id}))
+        const prod = cart.products.find(item => item._id === id );
+            if(prod.quantity <= 1){
+                notification['success']({
+                    message: '1 Item removed from cart',
+                    description: title
+                });
+            }
     }
 
     return (
@@ -185,9 +192,9 @@ const Cart = () => {
             <Wrapper>
                 <Title>YOUR CART</Title>
                 <Top>
-                    <TopButton>CONTINUE SHOPPING</TopButton>
+                    <TopButton onClick={handleClick}>CONTINUE SHOPPING</TopButton>
                     <TopTexts>
-                        <TopText>Shopping Bag(2)</TopText>
+                        <TopText>Shopping Bag({cart.quantity})</TopText>
                         <TopText>Your Wishlist(0)</TopText>
                     </TopTexts>
                     <TopButton type='filled'>CHECKOUT NOW</TopButton>
@@ -195,7 +202,7 @@ const Cart = () => {
                 <Bottom>
                     <Info>
                         {
-                            cart.products.map(product => <><Product>
+                            cart.products.map(product => <><Product key={product._id}>
                             <ProductDetail>
                                 <Image src={product.img} />
                                 <Details>
@@ -207,7 +214,7 @@ const Cart = () => {
                             </ProductDetail>
                             <PriceDetail>
                                 <ProductAmountContainer>
-                                    <RemoveIcon onClick={()=> handleQuantity('dec', product._id)} />
+                                    <RemoveIcon onClick={()=> handleQuantity('dec', product._id, product.title)} />
                                         <ProductAmount>{product.quantity}</ProductAmount>
                                     <AddIcon onClick={()=> handleQuantity('inc', product._id)} />
                                 </ProductAmountContainer>

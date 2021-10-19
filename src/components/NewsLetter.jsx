@@ -10,6 +10,7 @@ const Container = styled.div`
     align-items: center;
     flex-direction: column;
     height: 60vh;
+    padding: 0 10px;
 `;
 const Title = styled.h1`
     font-size: 70px;

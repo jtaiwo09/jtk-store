@@ -44,6 +44,8 @@ const Circle = styled.div`
 
 const Image = styled.img`
     height: 75%;
+    width: 100%;
+    object-fit: cover;
     z-index: 2;
 `;
 
@@ -65,8 +67,7 @@ const Icon = styled.div`
     }
 `;
 
-const Product = ({item}) => {
-    
+const Product = ({item, cat}) => {
     return (
         <Container>
             <Circle />
@@ -75,7 +76,7 @@ const Product = ({item}) => {
                 <Icon>
                     <ShoppingCartOutlinedIcon />
                 </Icon>
-                <Link to={`product/${item._id}`} className='link'>
+                <Link to={cat ? `/product/${item._id}` : `product/${item._id}`} className='link'>
                     <Icon>
                         <SearchIcon />
                     </Icon>

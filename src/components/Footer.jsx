@@ -74,7 +74,7 @@ const Footer = () => {
     return (
         <Container>
             <Left>
-                <Logo>LAMA.</Logo>
+                <Logo>JTK-Store</Logo>
                 <Desc>
                 There are many variationss of passages of Lorem Ipsum available, but the majority have suffured alteration in some form, by injected humour, oe randomised words which don't look even slightly believable.
                 </Desc>

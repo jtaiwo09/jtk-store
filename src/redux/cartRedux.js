@@ -13,21 +13,27 @@ const cartSlice = createSlice({
             state.products.push(action.payload);
             state.total += action.payload.price * action.payload.quantity;
         },
-        updateQty: (state, action)=> {
+        increaseCartQuantity: (state, action)=> {
+            const product = state.products.find(item => item._id === action.payload.id);
+            const productIndex = state.products.findIndex(item => item._id === action.payload.id);
+
             if(action.payload.type === 'dec'){
-                state.products.find(item=> item._id === action.payload.id).quantity -= 1;
-                state.total += (action.payload.price * action.payload.quantity) ;
-                console.log(action.payload.price)
-                console.log(action.payload.qty)
-            } else {
-                state.products.find(item=> item._id === action.payload.id).quantity += 1;
-                state.total += (action.payload.price * action.payload.quantity);
-                console.log(action.payload.price)
-                console.log(action.payload.qty)
+                if(product.quantity <= 1){
+                    state.products.splice(productIndex, 1);
+                    state.quantity--;
+                    state.total -= product.price;
+                } else {
+                    product.quantity--;
+                    state.total -= product.price;
+                }
+            } else if(action.payload.type === 'inc'){
+                product.quantity++;
+                state.total += product.price;
             }
+            
         }
     }
 });
 
-export const { addProduct, updateQty } = cartSlice.actions;
+export const { addProduct, increaseCartQuantity } = cartSlice.actions;
 export default cartSlice.reducer;

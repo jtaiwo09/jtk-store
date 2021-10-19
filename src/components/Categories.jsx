@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { categories } from '../data';
 import styled from 'styled-components';
 import CategoryItem from './CategoryItem';
@@ -12,10 +12,14 @@ const Container = styled.div`
 `;
 
 const Categories = () => {
+
+    useEffect(() => {
+        
+    }, [])
     return (
         <Container>
             { categories.map(item => (
-                <CategoryItem item={item} key={item.id}/>
+                <CategoryItem item={item} key={item.id} />
             ))}
         </Container>
     )

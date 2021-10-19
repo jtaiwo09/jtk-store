@@ -25,21 +25,21 @@ export const sliderItems = [
   export const categories = [
     {
       id: 1,
-      img: "https://images.pexels.com/photos/5886041/pexels-photo-5886041.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-      title: "SHIRT STYLE!",
+      img: "https://hips.hearstapps.com/vader-prod.s3.amazonaws.com/1599841027-reonaaug230139_1400x.png?crop=1.00xw:1xh;center,top&resize=480%3A%2A",
+      title: "WOMEN WEARS!",
       cat: "women"
     },
     {
       id: 2,
-      img: "https://images.pexels.com/photos/2983464/pexels-photo-2983464.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-      title: "LOUNGEWEAR LOVE",
-      cat: "coat"
+      img: "https://ae01.alicdn.com/kf/Ha47478d4e0d7433a9bb0d1386b06c602y/Fashion-Casual-Men-Shirts-Long-Sleeve-Street-Wears-Red-Blue-Flame-Printed-Tops-Formal-Shirts-For.jpg_Q90.jpg_.webp",
+      title: "MEN SHIRT",
+      cat: "men"
     },
     {
       id: 3,
-      img: "https://images.pexels.com/photos/5480696/pexels-photo-5480696.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500",
-      title: "LIGHT JACKETS",
-      cat: "jeans"
+      img: "https://images.yaoota.com/6I0WNF6fnHAfP_I_58tPOTcdx3s=/trim/yaootaweb-production-ke/media/crawledproductimages/c313cc296eadde4c8dfb4ca782852fdae84abd3b.jpg",
+      title: "MEN SHOES",
+      cat: "shoes"
     },
   ];
 
